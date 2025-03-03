@@ -1,6 +1,7 @@
 import { Formik, Form, Field, ErrorMessage, useField } from "formik";
 import * as Yup from "yup";
 
+// Текстовый инпут
 const MyTextInput = ({ label, ...props }) => {
     const [field, meta] = useField(props);
     return (
@@ -14,6 +15,7 @@ const MyTextInput = ({ label, ...props }) => {
     );
 };
 
+// Чекбокс
 const MyCheckbox = ({ children, ...props }) => {
     const [field, meta] = useField({ ...props, type: "checkbox" });
     return (
@@ -27,6 +29,63 @@ const MyCheckbox = ({ children, ...props }) => {
                 <div className="error">{meta.error}</div>
             ) : null}
         </>
+    );
+};
+
+// Поле с количеством
+const MyAmount = ({ label, ...props }) => {
+    const [field, meta] = useField(props);
+    return (
+        <>
+            <label htmlFor={props.name}>{label}</label>
+            <input {...props} {...field} />
+            {meta.touched && meta.error ? (
+                <div className="error">{meta.error}</div>
+            ) : null}
+        </>
+    );
+};
+
+// Выпадающий список валют
+const MyCurrencySelect = ({ label, options, ...props }) => {
+    const [field, meta] = useField(props);
+    return (
+        <div className="form-group">
+            <label htmlFor={props.id || props.name}> {label}</label>
+            <select {...field} {...props}>
+                {options.map((option) => (
+                    <option key={option.value} value={option.value}>
+                        {option.label}
+                    </option>
+                ))}
+            </select>
+
+            {meta.touched && meta.error ? (
+                <div className="error">{meta.error}</div>
+            ) : null}
+        </div>
+    );
+};
+
+const currencyOptions = [
+    { value: "", label: "Выберите валюту" },
+    { value: "USD", label: "USD" },
+    { value: "UAH", label: "UAH" },
+    { value: "RUB", label: "RUB" },
+];
+
+// Текстовое поле
+const MyTextArea = ({ label, ...props }) => {
+    const [field, meta] = useField(props);
+    return (
+        <div className="form-group">
+            <label htmlFor={props.id || props.name}> {label}</label>
+            <textarea {...field} {...props} />
+
+            {meta.touched && meta.error ? (
+                <div className="error">{meta.error}</div>
+            ) : null}
+        </div>
     );
 };
 
@@ -67,34 +126,27 @@ const CustomForm = () => {
                     name="name"
                     type="text"
                 />
-
                 <MyTextInput
                     label="Ваша почта"
                     id="email"
                     name="email"
                     type="email"
                 />
-
-                <label htmlFor="amount">Количество</label>
-                <Field id="amount" name="amount" type="number" />
-                <ErrorMessage className="error" name="amount" component="div" />
-
-                <label htmlFor="currency">Валюта</label>
-                <Field id="currency" name="currency" as="select">
-                    <option value="">Выберите валюту</option>
-                    <option value="USD">USD</option>
-                    <option value="UAH">UAH</option>
-                    <option value="RUB">RUB</option>
-                </Field>
-                <ErrorMessage
-                    className="error"
+                <MyAmount
+                    label="Количество"
+                    htmlFor="amount"
+                    id="amount"
+                    name="amount"
+                    type="number"
+                />
+                <MyCurrencySelect
+                    label="Валюта"
                     name="currency"
-                    component="div"
+                    id="currency"
+                    options={currencyOptions}
                 />
 
-                <label htmlFor="text">Ваше сообщение</label>
-                <Field id="text" name="text" as="textarea" />
-                <ErrorMessage className="error" name="text" component="div" />
+                <MyTextArea label="Ваше сообщение" name="text" id="text" />
 
                 <MyCheckbox name="terms">
                     Соглашаетесь с политикой конфиденциальности?
